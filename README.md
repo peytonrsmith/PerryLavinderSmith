@@ -9,10 +9,10 @@ Intended Audience: Environmental consultants and fossil fuel industry.
 
 Due to the scope of the data (revealed during initial cleaning), we changed our research question to the following:
 
-**Research Question: Which pesticides are understudied in plants in the United States?**
-Optional, with time we would also look at where are they understudied.
+**Research Question: Do regions with higher pesticide use have higher contamination concentrations in groundwater and soil?**
+Optional, with time we would also look at inaturalist data for the region. 
 
-Intended Audience: Researchers looking for a new project and pesticide companies
+Intended Audience: Residents worried about the amount of pesticide use in their area, farmers, and pesticide companies. 
 
 Additional data can be accessed 
 
