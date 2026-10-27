@@ -21,7 +21,7 @@ Additional data can be accessed
   Water_Year: Year for estimated pesticide use and water sample collection ,
   Result_Value: ug/L concentration of pesticide found in surface water ,
   site_ID: USGS site identification number ,
-  drainage_area: Drainage area of the watershed identified in huc_cd ,
+  drainage_area: Drainage area of the watershed identified in the specified site ,
   county_fips: County identifier code ,
   EPEST_HIGH_KG: Estimated (high) pesticide use in kg ,
   Compound: Pesticide used in the county 
