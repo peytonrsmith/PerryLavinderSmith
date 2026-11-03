@@ -24,7 +24,8 @@ Additional data can be accessed
   drainage_area: Drainage area of the watershed identified in the specified site ,
   county_fips: County identifier code ,
   EPEST_HIGH_KG: Estimated (high) pesticide use in kg ,
-  Compound: Pesticide used in the county 
+  Compound: Pesticide used in the county , 
+  Pest_Category: Type of pesticide (herbicide e.g.)
 
   One row of the pest_water_processed data set represents one sample collection. In this sample collection, the table specifies the year, the pesticide, the pesticide concentration, site information (site ID, county, drainage area), estimated pesticide use within that county, and point geometry of the sample site. 
   
