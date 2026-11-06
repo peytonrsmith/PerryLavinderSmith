@@ -1,4 +1,4 @@
-### Dashboard Base Code
+### app.py
 #### Setup
 # Packages
 from pathlib import Path
@@ -23,9 +23,11 @@ from shiny import App, reactive, render, ui
 project_fldr = Path.cwd().parent
 raw_fldr = project_fldr /'Data'/'unprocessed' 
 processed_fldr = project_fldr /'Data'/'processed'
+
 # Import cleaned data
 pest_water_categorized = pd.read_csv(processed_fldr/'pest_water_cat.csv')
 pest_water_categorized.head()
+
 #### Base Plot
 #Seaborn Theme 
 sns.set_theme(style='whitegrid', 
@@ -188,3 +190,4 @@ def server(input, output, session):
 
         return fig
 app = App(app_ui, server)
+
