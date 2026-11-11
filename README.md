@@ -14,6 +14,8 @@ Optional, with time we would also look at inaturalist data for the region.
 
 Intended Audience: Residents worried about the amount of pesticide use in their area, farmers, and pesticide companies. 
 
+The analytical report for this project can be found in the Docs folder of this repository under the title "712 Analytical Report"
+
 Additional data can be accessed 
 
 **Data Dictionary**
