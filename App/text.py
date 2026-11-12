@@ -89,8 +89,8 @@ with ui.nav_panel('Overview'):
 
 This research focuses on the central question of whether counties with higher pesticide use also experience higher concentrations of pesticide contamination in surface water. To further explore this relationship, a supporting question examines whether the strength of this correlation differs among pesticide categories, including herbicides, fungicides, and insecticides. The research is intended for residents concerned about pesticide use and water quality in their communities, farmers, and pesticide companies interested in understanding the environmental impacts of pesticide use.
 
-Question: **do streams in counties with heavy pesticide use
-show higher pesticide concentrations?**
+Question: **Do streams in counties with heavy pesticide use
+show higher pesticide concentrations in streams?**
 
 #### Data
 
@@ -100,7 +100,7 @@ show higher pesticide concentrations?**
 - **Stream concentrations:** Mean pesticide concentrations in water (µg/L) measured at
   USGS stream monitoring sites, averaged across sampling events at each site.
 
-#### How to read the map
+#### How to use the map
 
 - **Counties** are shaded from light yellow (less use) to dark brown (more use).
   Counties in white have no estimate.
