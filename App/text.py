@@ -108,12 +108,6 @@ show higher pesticide concentrations in streams?**
 - Hover over a county or site for a quick summary, or click for full details.
 - Use the layer control in the top right to turn counties or sites on and off.
 
-#### Keep in mind
-
-County use estimates and stream samples don't line up perfectly. A stream can drain land
-from several counties, and concentrations depend on rainfall, timing of application, and
-how often a site was sampled. Patterns on this map show where use and concentrations
-overlap, not proof that one causes the other.
 """)
 
     with ui.card(height='650px'):
@@ -197,15 +191,11 @@ with ui.nav_panel('Results'):
 with ui.nav_panel('Model'):
     ui.h2('What the Model Shows', style='margin-top: 1.5rem;')
     ui.markdown("""
-Different pesticides are used in very different amounts and behave differently once they reach
-water, so comparing all of them at once can be misleading. This model compares each pesticide
-**only to itself**: atrazine in a high-use county against atrazine in a low-use county, and so on.
-That separates two questions: does *more use* raise stream levels, and does *which pesticide*
-it is matter?
+This dashboard allows you to look at how pesticide amount impacts stream concentration by individual presticides. 
 """)
 
     ui.input_selectize('model_pests',
-                       'Choose pesticides (up to 8). Clear the box to use all pesticides.',
+                       'Choose pesticides (8 max)',
                        choices=all_pests, selected=top_pests, multiple=True,
                        options={'maxItems': 8, 'plugins': ['remove_button']},
                        width='100%')
