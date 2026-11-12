@@ -31,11 +31,13 @@ out_path = data_path
 # Replace with your file name (needs polygons: .gpkg, .shp, or .geojson)
 map_df = gpd.read_file(data_path / 'counties_pesticide.gpkg').to_crs('EPSG:4326')
 
+# State outlines, made by merging counties BEFORE simplifying
+# (simplifying first leaves slivers between counties that show up as stray lines)
+states = map_df[['STATEFP', 'geometry']].dissolve(by='STATEFP')
+states['geometry'] = states.geometry.simplify(0.01)
+
 # Simplify county shapes so the map loads quickly
 map_df['geometry'] = map_df.geometry.simplify(0.01)
-
-# State outlines, made by merging counties in each state
-states = map_df.dissolve(by='STATEFP')[['geometry']]
 
 # %%
 # LOAD SITES
@@ -61,7 +63,7 @@ def make_map(counties, stations):
     m = counties.explore(
         column='log_pest_kg',
         cmap='YlOrBr',
-        style_kwds={'color': 'black', 'weight': 0.3},
+        style_kwds={'color': '#999999', 'weight': 0.3},
         missing_kwds={'color': 'white', 'fillOpacity': 0.3},
         highlight_kwds={'color': '#1f4e79', 'weight': 3, 'fillOpacity': 0.8},
         tooltip=['NAME', 'pest_kg'],
@@ -77,7 +79,7 @@ def make_map(counties, stations):
     folium.GeoJson(
         states,
         name='State boundaries',
-        style_function=lambda f: {'color': 'black', 'weight': 1.5, 'fillOpacity': 0},
+        style_function=lambda f: {'color': '#333333', 'weight': 1.2, 'fillOpacity': 0},
         interactive=False,
     ).add_to(m)
 
