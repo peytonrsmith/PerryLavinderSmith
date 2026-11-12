@@ -8,7 +8,7 @@
 # conda create -n env700-shiny -c conda-forge python=3.12 shiny geopandas pandas matplotlib folium mapclassify jupyterlab ipykernel
 # ```
 #
-# 
+# Peyton Smith · Fall 2026
 #
 # ---
 # %%
@@ -21,10 +21,10 @@ import geopandas as gpd
 import folium
 
 # Paths
-project_path = Path(__file__).parent.parent.resolve()
-data_path = project_path / 'Data' / 'unprocessed'
-out_path = project_path / 'Data' / 'processed'
-out_path.mkdir(parents=True, exist_ok=True)
+# All data lives in App/data so the app can be deployed on its own
+app_path = Path(__file__).parent.resolve()
+data_path = app_path / 'data'
+out_path = data_path
 
 # %%
 # LOAD COUNTIES
@@ -33,6 +33,9 @@ map_df = gpd.read_file(data_path / 'counties_pesticide.gpkg').to_crs('EPSG:4326'
 
 # Simplify county shapes so the map loads quickly
 map_df['geometry'] = map_df.geometry.simplify(0.01)
+
+# State outlines, made by merging counties in each state
+states = map_df.dissolve(by='STATEFP')[['geometry']]
 
 # %%
 # LOAD SITES
@@ -69,6 +72,14 @@ def make_map(counties, stations):
         name='Counties',
         tiles='Esri.WorldGrayCanvas',
     )
+
+    # State boundaries (drawn on top of counties, not clickable)
+    folium.GeoJson(
+        states,
+        name='State boundaries',
+        style_function=lambda f: {'color': 'black', 'weight': 1.5, 'fillOpacity': 0},
+        interactive=False,
+    ).add_to(m)
 
     stations.explore(
         m=m,

@@ -20,10 +20,10 @@ from shiny import reactive
 from shiny.express import input, render, ui
 
 sys.path.insert(0, str(Path(__file__).parent))  # so pesticide_map.py can be imported
-from pesticide_map import make_map, map_df, sites, out_path
+from pesticide_map import make_map, map_df, sites, data_path
 
-# Site-year averages by pesticide (saved from the notebook to Data/processed)
-pest = pd.read_csv(out_path / 'pest_water_cat.csv')
+# Site-year averages by pesticide (saved from the notebook)
+pest = pd.read_csv(data_path / 'pest_water_cat.csv')
 pest = pest[(pest['mean_pesticide_use'] > 0) & (pest['mean_concentration_water'] > 0)]
 pest['Pest_Category'] = pest['Pest_Category'].fillna('Unclassified')
 

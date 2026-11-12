@@ -1,0 +1,9 @@
+shiny
+pandas
+numpy
+geopandas
+folium
+mapclassify
+matplotlib
+scipy
+statsmodels
