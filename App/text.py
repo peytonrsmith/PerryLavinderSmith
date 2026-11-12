@@ -85,14 +85,11 @@ with ui.nav_panel('Overview'):
     ui.hr()
 
     ui.markdown("""
-### Background
+### Introduction
 
-Pesticides applied to farmland, lawns, and roadsides don't always stay where they're sprayed.
-Rain and irrigation can carry them into nearby streams, where even low concentrations can
-affect aquatic insects, fish, and amphibians. Many of these same streams feed drinking water
-supplies, so tracking where pesticides end up matters for both ecosystem and human health.
+This research focuses on the central question of whether counties with higher pesticide use also experience higher concentrations of pesticide contamination in surface water. To further explore this relationship, a supporting question examines whether the strength of this correlation differs among pesticide categories, including herbicides, fungicides, and insecticides. The research is intended for residents concerned about pesticide use and water quality in their communities, farmers, and pesticide companies interested in understanding the environmental impacts of pesticide use.
 
-This dashboard asks a simple question: **do streams in counties with heavy pesticide use
+Question: **do streams in counties with heavy pesticide use
 show higher pesticide concentrations?**
 
 #### Data
