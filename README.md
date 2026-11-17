@@ -31,6 +31,12 @@ Additional data can be accessed
 
   One row of the pest_water_processed data set represents one sample collection. In this sample collection, the table specifies the year, the pesticide, the pesticide concentration, site information (site ID, county, drainage area), estimated pesticide use within that county, and point geometry of the sample site. 
 
+**Dashboard Change Log**
+- added explanatory picture of how to use the interactive map
+- for the individual pesticide model grouped by pesticide type and include type in label
+- More detailed explanation of individual pesticide model 
+
+
 **AI Use**
 
 AI was used to help format and style the dashboard. 
