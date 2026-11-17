@@ -37,6 +37,7 @@ Additional data can be accessed
 - More detailed explanation of individual pesticide model because felt like it was hard to understand
 
 **Data Reproduction**
+
 Selecting Data
 - USGS Stream site pesticide concentrations were joined to a dataset that included the coordinates of each monitoring station, coordinates were then used to identify what county each monitoring sites was in
 - Estimated pesticide usage data was joined to USGS streams sites (+ locations) by matching compound, year, and county. Averages were calculated for each pesticide per year for each of the monitoring sites
