@@ -30,5 +30,8 @@ Additional data can be accessed
   Pest_Category: Type of pesticide (herbicide e.g.)
 
   One row of the pest_water_processed data set represents one sample collection. In this sample collection, the table specifies the year, the pesticide, the pesticide concentration, site information (site ID, county, drainage area), estimated pesticide use within that county, and point geometry of the sample site. 
-  
+
+**AI Use**
+
+AI was used to help format and style the dashboard. 
   
