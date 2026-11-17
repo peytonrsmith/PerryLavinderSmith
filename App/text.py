@@ -93,10 +93,37 @@ with ui.nav_panel('Overview'):
     ui.markdown("""
 ### Introduction
 
-This research focuses on the central question of whether counties with higher pesticide use also experience higher concentrations of pesticide contamination in surface water. To further explore this relationship, a supporting question examines whether the strength of this correlation differs among pesticide categories, including herbicides, fungicides, and insecticides. The research is intended for residents concerned about pesticide use and water quality in their communities, farmers, and pesticide companies interested in understanding the environmental impacts of pesticide use.
+This dashboard compares how much pesticide is applied to farmland in each 
+U.S. county with how much shows up in nearby streams. It maps estimated 
+agricultural pesticide use alongside concentrations measured at USGS stream 
+monitoring sites from 2013 to 2017, so you can see where 
+heavy use and high stream levels overlap. The data is organized both by pesticide 
+types and individual pesticides. 
 
-Question: **Do streams in counties with heavy pesticide use
-show higher pesticide concentrations in streams?**
+
+### Background
+
+Pesticides are widely used across the United States to support agricultural 
+production, but their effects can extend well beyond the fields where they 
+are applied. Understanding the relationship between pesticide use and surface 
+water contamination is important for identifying potential environmental and 
+human health impacts. By investigating these patterns, we hope to help farmers 
+and communities make more informed decisions about pesticide use and its 
+consequences.
+
+Herbicides now make up about two-thirds of U.S. pesticide use, and have increased 
+in use since the early 2000s because of glyphosate and the spread 
+of herbicide-tolerant corn and soybeans. 
+
+Changing weather patterns are also making runoff worse and increasing the amount of 
+pesticides that are ending up in water systems. A growing share of 
+U.S. rainfall now arrives in intense single-day storms. Heavy downpours wash more 
+pesticide off fields before it can break down or bind to soil.
+
+### How to Use the Map
+
+
+
 
 #### Data
 
@@ -124,6 +151,7 @@ show higher pesticide concentrations in streams?**
 # ---------------------------------------------------------------
 # PAGE 2: RESULTS
 # ---------------------------------------------------------------
+#my perfect child
 with ui.nav_panel('Results'):
     with ui.layout_sidebar():
         with ui.sidebar():
