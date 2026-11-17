@@ -145,7 +145,7 @@ pesticide off fields before it can break down or bind to soil.
 """)
         ui.img(src=f'data:image/png;base64,{img_b64}',
                alt='Dashboard overview image',
-               style='width: 100%; border-radius: 8px;')
+               style='width: 100%; max-width: 300px; border-radius: 8px; display: block; margin: auto;')
 
     with ui.card(height='650px'):
         @render.ui
