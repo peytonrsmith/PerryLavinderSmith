@@ -20,10 +20,15 @@ from matplotlib.lines import Line2D
 from scipy import stats
 import statsmodels.formula.api as smf
 from shiny import reactive
-from shiny.express import input, render, ui
+from shiny.express import input, render, ui, app_opts
+import base64
 
 sys.path.insert(0, str(Path(__file__).parent))  # so pesticide_map.py can be imported
 from pesticide_map import make_map, map_df, sites, data_path
+
+
+img_path = Path(__file__).parent / 'images' / 'dashboardIMG.png'
+img_b64 = base64.b64encode(img_path.read_bytes()).decode()
 
 # Site-year averages by pesticide 
 pest = pd.read_csv(data_path / 'pest_water_cat.csv')
@@ -126,7 +131,10 @@ pesticide off fields before it can break down or bind to soil.
   across 2013–2017. 
 - **Stream concentrations:** Mean pesticide concentrations in water (µg/L) measured at
   USGS stream monitoring sites, averaged across sampling events at each site.
+""")
 
+    with ui.layout_columns(col_widths=[7, 5], class_='align-items-center'):
+        ui.markdown("""
 #### How to use the map
 
 - **Counties** are shaded from light yellow (less use) to dark brown (more use).
@@ -134,8 +142,10 @@ pesticide off fields before it can break down or bind to soil.
 - **Dots** are monitoring sites, shaded from light to dark blue by concentration.
 - Hover over a county or site for a quick summary, or click for full details.
 - Use the layer control in the top right to turn counties or sites on and off.
-
 """)
+        ui.img(src=f'data:image/png;base64,{img_b64}',
+               alt='Dashboard overview image',
+               style='width: 100%; border-radius: 8px;')
 
     with ui.card(height='650px'):
         @render.ui
