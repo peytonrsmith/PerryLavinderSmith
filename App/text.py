@@ -74,6 +74,10 @@ pest_effects = pd.DataFrame({
 top_pests = list(pest['Pesticide_Name'].value_counts().head(5).index)
 all_pests = sorted(pest['Pesticide_Name'].unique())
 
+
+# Pesticide name -> category, for labels
+pest_cat = pest.groupby('Pesticide_Name')['Pest_Category'].first().to_dict()
+
 line_colors = ['#0072B2', '#E69F00', '#009E73', '#CC79A7',
                '#D55E00', '#56B4E9', '#F0E442', '#000000']
 
@@ -240,7 +244,7 @@ This dashboard allows you to look at how pesticide amount impacts stream concent
 
     ui.input_selectize('model_pests',
                        'Choose pesticides (8 max)',
-                       choices=all_pests, selected=top_pests, multiple=True,
+                       choices={p: f'{p} ({pest_cat[p].capitalize()})' for p in all_pests}, selected=top_pests, multiple=True,
                        options={'maxItems': 8, 'plugins': ['remove_button']},
                        width='100%')
 
@@ -311,7 +315,7 @@ This dashboard allows you to look at how pesticide amount impacts stream concent
                     line = pd.DataFrame({'Pesticide_Name': name,
                                          'log_use': np.linspace(d['log_use'].min(), d['log_use'].max(), 50)})
                     ax.plot(10**line['log_use'], 10**full.predict(line),
-                            color=color, linewidth=2.5, label=name)
+                            color=color, linewidth=2.5, label=f'{name} ({pest_cat[name].capitalize()})')
 
                 ax.set(xscale='log', yscale='log',
                        xlabel='County Pesticide Use, High Estimate (kg)',
