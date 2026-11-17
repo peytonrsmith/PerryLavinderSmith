@@ -12,7 +12,6 @@
 
 import sys
 from pathlib import Path
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -172,15 +171,14 @@ with ui.nav_panel('Results'):
             ui.input_checkbox_group('years', 'Years',
                                     choices=[str(y) for y in years],
                                     selected=[str(y) for y in years])
-            ui.input_select('category', 'Pesticide type',
-                            choices=['All'] + categories)
+            ui.input_checkbox_group('category', 'Pesticide type',
+                                    choices={c: c.capitalize() for c in categories},
+                                    selected=categories)
 
         @reactive.calc
         def filtered():
             d = pest[pest['Water_Year'].isin([int(y) for y in input.years()])]
-            if input.category() != 'All':
-                d = d[d['Pest_Category'] == input.category()]
-            return d
+            return d[d['Pest_Category'].isin(input.category())]
 
         with ui.card(full_screen=True):
             ui.card_header('County Pesticide Use vs. Stream Concentration')
@@ -237,9 +235,9 @@ with ui.nav_panel('Results'):
 # PAGE 3: MODEL
 # ---------------------------------------------------------------
 with ui.nav_panel('Model'):
-    ui.h2('What the Model Shows', style='margin-top: 1.5rem;')
+    ui.h2('Model by Individual Pesticides', style='margin-top: 1.5rem;')
     ui.markdown("""
-This dashboard allows you to look at how pesticide amount impacts stream concentration by individual presticides. 
+This dashboard allows you to look at trend lines by indiviudal pesticide.
 """)
 
     ui.input_selectize('model_pests',
