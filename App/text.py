@@ -2,11 +2,14 @@
 # # Pesticides in U.S. Streams Dashboard
 # Run from the App folder: shiny run --reload text.py
 #
-# Peyton Smith · Fall 2026
+# 
 #
 # ---
 # %%
 # SETUP
+# I for some reason thought it would be a good idea to put the text in another .py and then decided to make 
+# a third tab and now it's all a mess and I'm too scared to change anything 
+
 import sys
 from pathlib import Path
 
@@ -22,7 +25,7 @@ from shiny.express import input, render, ui
 sys.path.insert(0, str(Path(__file__).parent))  # so pesticide_map.py can be imported
 from pesticide_map import make_map, map_df, sites, data_path
 
-# Site-year averages by pesticide (saved from the notebook)
+# Site-year averages by pesticide 
 pest = pd.read_csv(data_path / 'pest_water_cat.csv')
 pest = pest[(pest['mean_pesticide_use'] > 0) & (pest['mean_concentration_water'] > 0)]
 pest['Pest_Category'] = pest['Pest_Category'].fillna('Unclassified')
@@ -30,10 +33,12 @@ pest['Pest_Category'] = pest['Pest_Category'].fillna('Unclassified')
 years = sorted(pest['Water_Year'].unique())
 categories = sorted(pest['Pest_Category'].unique())
 
-# Colorblind-friendly colors for years, shapes for pesticide types
+# colors for years and shapes for pesticide types
 year_colors = dict(zip(years, ['#0072B2', '#E69F00', '#009E73', '#CC79A7', '#D55E00', '#56B4E9']))
 cat_markers = dict(zip(categories, ['o', 's', '^', 'D', 'v', 'P', 'X', '*']))
 
+
+#Again scary things. I am so glad I never have to go into webdev. 
 # %%
 # MODELS (fit once when the app starts)
 pest['log_use'] = np.log10(pest['mean_pesticide_use'])
@@ -70,6 +75,7 @@ line_colors = ['#0072B2', '#E69F00', '#009E73', '#CC79A7',
 def p_label(p):
     return 'p < 0.001' if p < 0.001 else f'p = {p:.3f}'
 
+#Creation of the actual dashboard pages 
 # %%
 # PAGE
 ui.page_opts(window_title='Pesticides in U.S. Streams', fillable=False)

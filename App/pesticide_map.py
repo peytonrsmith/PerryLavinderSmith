@@ -8,7 +8,7 @@
 # conda create -n env700-shiny -c conda-forge python=3.12 shiny geopandas pandas matplotlib folium mapclassify jupyterlab ipykernel
 # ```
 #
-# Peyton Smith · Fall 2026
+# 
 #
 # ---
 # %%
@@ -28,26 +28,23 @@ out_path = data_path
 
 # %%
 # LOAD COUNTIES
-# Replace with your file name (needs polygons: .gpkg, .shp, or .geojson)
 map_df = gpd.read_file(data_path / 'counties_pesticide.gpkg').to_crs('EPSG:4326')
 
-# State outlines, made by merging counties BEFORE simplifying
-# (simplifying first leaves slivers between counties that show up as stray lines)
+#Simplify Data so the map loads faster 
 states = map_df[['STATEFP', 'geometry']].dissolve(by='STATEFP')
 states['geometry'] = states.geometry.simplify(0.01)
 
-# Simplify county shapes so the map loads quickly
 map_df['geometry'] = map_df.geometry.simplify(0.01)
 
 # %%
 # LOAD SITES
 sites = gpd.read_file(data_path / 'sites.gpkg').to_crs('EPSG:4326')
 
-# If the merge left duplicate _x/_y columns, keep the _x set and drop the suffix
+# Needed to fix my poor mergining in the cleaned_ecotox 
 sites = sites.drop(columns=[c for c in sites.columns if c.endswith('_y')])
 sites.columns = [c.removesuffix('_x') for c in sites.columns]
 
-# Round for cleaner popups
+# Round data for popups 
 sites['mean_concentration_water'] = sites['mean_concentration_water'].round(3)
 sites['mean_pesticide_use'] = sites['mean_pesticide_use'].round(0)
 map_df['pest_kg'] = map_df['pest_kg'].round(0)
@@ -56,6 +53,8 @@ map_df['pest_kg'] = map_df['pest_kg'].round(0)
 map_df['log_pest_kg'] = np.log10(map_df['pest_kg'].where(map_df['pest_kg'] > 0))
 sites['log_conc'] = np.log10(sites['mean_concentration_water'].where(sites['mean_concentration_water'] > 0))
 
+
+#Things far beyond my coding ability that I had to ask AI to do because I hate making dashboards 
 # %%
 # FUNCTIONS
 def make_map(counties, stations):
