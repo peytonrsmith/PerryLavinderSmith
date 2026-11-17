@@ -234,217 +234,119 @@ with ui.nav_panel('Results'):
 # ---------------------------------------------------------------
 # PAGE 3: MODEL
 # ---------------------------------------------------------------
+pest_cat = pest.groupby('Pesticide_Name')['Pest_Category'].first().to_dict()
+
 with ui.nav_panel('Model'):
-    ui.h2('Model by Individual Pesticides', style='margin-top: 1.5rem;')
-    ui.markdown("""
-This dashboard allows you to look at trend lines by indiviudal pesticide.
+    ui.h2('How the Model Works', style='margin-top: 1.5rem;')
+    ui.markdown(f"""
+### Building the model
+
+Each data point is one pesticide at one USGS stream monitoring site in one year, 
+paired with the estimated agricultural use of that pesticide in the surrounding 
+county. In total the model uses **{len(pest):,} data points** covering 
+**{pest['Pesticide_Name'].nunique()} pesticides**.
+
+Both county use and stream concentration span several orders of magnitude and are 
+heavily skewed, with most values small and a few very large. To make the 
+relationship easier to model, both were converted to a log10 scale. Rows with zero 
+use or zero concentration were removed, since the log of zero is undefined.
+
+We then fit a linear regression (ordinary least squares):
+
+**log10(stream concentration) = intercept + slope × log10(county use)**
+
+The slope describes how stream levels change as county use goes up. A slope of 1 
+would mean concentration rises in direct proportion to use, and a slope of 0 would 
+mean no relationship at all.
+
+### Overall results (all pesticides together)
 """)
-
-    ui.input_selectize('model_pests',
-                       'Choose pesticides (8 max)',
-                       choices={p: f'{p} ({pest_cat[p].capitalize()})' for p in all_pests}, selected=top_pests, multiple=True,
-                       options={'maxItems': 8, 'plugins': ['remove_button']},
-                       width='100%')
-
-    @reactive.calc
-    def chosen():
-        return list(input.model_pests())
-
-    @reactive.calc
-    def models():
-        d = pest[pest['Pesticide_Name'].isin(chosen())] if chosen() else pest
-        return fit_models(d)
-
-    @render.ui
-    def selection_note():
-        n = len(chosen())
-        text = f'Results below use the {n} selected pesticide{"s" if n != 1 else ""}.' if n \
-            else 'Results below use all pesticides.'
-        return ui.p(text, class_='text-muted')
 
     with ui.layout_columns(col_widths=[4, 4, 4]):
         with ui.value_box():
+            'R²'
+            f'{pooled_all.rsquared:.2f}'
+            f'County use explains {pooled_all.rsquared:.0%} of the variation in stream levels'
+
+        with ui.value_box():
+            'p-value'
+            p_label(pooled_all.pvalues['log_use']).removeprefix('p ').strip()
+            'Chance of a slope this strong if there were no real link'
+
+        with ui.value_box():
             'Effect of 10× more county use'
+            f'{(10**pooled_all.params["log_use"] - 1) * 100:+.0f}%'
+            'change in stream concentration'
 
-            @render.text
-            def effect_value():
-                slope = models()[1].params['log_use']
-                return f'{(10**slope - 1) * 100:+.0f}%'
-
-            @render.text
-            def effect_note():
-                return f'stream concentration, same pesticide ({p_label(models()[1].pvalues["log_use"])})'
-
-        with ui.value_box():
-            'Variation explained by use alone'
-
-            @render.text
-            def r2_pooled():
-                return f'{models()[0].rsquared:.0%}'
-
-            'of differences between samples'
-
-        with ui.value_box():
-            'Explained by use + pesticide type'
-
-            @render.text
-            def r2_full():
-                return f'{models()[1].rsquared:.0%}'
-
-            'of differences between samples'
-
-    with ui.layout_columns(col_widths=[8, 4]):
-        with ui.card(full_screen=True):
-            ui.card_header('Each pesticide has its own level, but use has the same effect')
-
-            @render.plot(height=480)
-            def parallel_lines():
-                full = models()[1]
-                fig, ax = plt.subplots(figsize=(9, 6))
-
-                other = pest[~pest['Pesticide_Name'].isin(chosen())]
-                ax.scatter(other['mean_pesticide_use'], other['mean_concentration_water'],
-                           color='lightgray', s=5, alpha=0.3, label='Other pesticides')
-
-                for name, color in zip(chosen(), line_colors):
-                    d = pest[pest['Pesticide_Name'] == name]
-                    ax.scatter(d['mean_pesticide_use'], d['mean_concentration_water'],
-                               color=color, s=8, alpha=0.4)
-                    line = pd.DataFrame({'Pesticide_Name': name,
-                                         'log_use': np.linspace(d['log_use'].min(), d['log_use'].max(), 50)})
-                    ax.plot(10**line['log_use'], 10**full.predict(line),
-                            color=color, linewidth=2.5, label=f'{name} ({pest_cat[name].capitalize()})')
-
-                ax.set(xscale='log', yscale='log',
-                       xlabel='County Pesticide Use, High Estimate (kg)',
-                       ylabel='Water Concentration (µg/L)')
-                ax.legend(frameon=False, fontsize=9)
-                fig.tight_layout()
-                return fig
-
-        with ui.card():
-            ui.card_header('Before and after accounting for pesticide type')
-
-            @render.table
-            def model_compare():
-                pooled, full = models()
-                return pd.DataFrame({
-                    '': ['Use slope', '10× use →', 'R²', 'p-value (use)'],
-                    'Use only': [f'{pooled.params["log_use"]:.3f}',
-                                 f'{(10**pooled.params["log_use"] - 1) * 100:+.0f}%',
-                                 f'{pooled.rsquared:.2f}',
-                                 p_label(pooled.pvalues['log_use']).removeprefix('p ')],
-                    'Use + type': [f'{full.params["log_use"]:.3f}',
-                                   f'{(10**full.params["log_use"] - 1) * 100:+.0f}%',
-                                   f'{full.rsquared:.2f}',
-                                   p_label(full.pvalues['log_use']).removeprefix('p ')],
-                })
-
-            @render.ui
-            def model_interpretation():
-                pooled, full = models()
-                s0, s1 = pooled.params['log_use'], full.params['log_use']
-                r0, r1 = pooled.rsquared, full.rsquared
-                p1 = full.pvalues['log_use']
-                n = len(chosen())
-                group = 'the selected pesticides' if n else 'all pesticides'
-
-                # 1. The use effect
-                if p1 < 0.05:
-                    text = (f'For {group}, a county using 10× more of a pesticide tends to have about '
-                            f'**{10**s1:.1f} times** the concentration in its streams '
-                            f'({(10**s1 - 1) * 100:+.0f}%, {p_label(p1)}).')
-                else:
-                    text = (f'For {group}, there is no clear link between county use and stream '
-                            f'levels ({p_label(p1)}).')
-
-                # 2. What adding pesticide type changed
-                if n == 1:
-                    text += ' With one pesticide, type adds nothing, so both models match.'
-                elif r1 - r0 < 0.05:
-                    text += (' Adding pesticide type barely changes the results, so these pesticides '
-                             'sit at similar typical levels and the pattern is mostly about how much is used.')
-                else:
-                    text += (f' Adding pesticide type raises R² from {r0:.2f} to {r1:.2f}, so which '
-                             'pesticide it is explains much of the difference between samples.')
-                if abs(s1 - s0) > 0.25 * abs(s0):
-                    text += (f' The use slope changes from {s0:.2f} to {s1:.2f} once type is included, '
-                             'so part of the use-only trend came from differences between pesticides.')
-
-                # 3. Compared with all pesticides
-                if n:
-                    s_all = full_all.params['log_use']
-                    closer = 'more' if s1 > s_all else 'less'
-                    text += (f' These pesticides track county use {closer} closely than pesticides '
-                             f'overall ({(10**s_all - 1) * 100:+.0f}% per 10× use).')
-
-                return ui.markdown(text)
-
-    with ui.card(full_screen=True):
-        ui.card_header('Which pesticides run higher or lower than expected')
-        ui.markdown("""
-Typical stream concentration for each pesticide at the same level of use, compared to the
-average pesticide (all pesticides in the data). Selected pesticides are highlighted in the
-same colors as the chart above. Bars show 95% confidence intervals.
+    ui.markdown(f"""
+**What this means:** counties that use more of a pesticide do tend to have more of 
+it in their streams, and the link is very unlikely to be due to chance. But the R² 
+is low, so county use on its own leaves most of the differences between samples 
+unexplained. A big reason is that pesticides differ from each other: some show up 
+in water at much higher levels than others regardless of how much is applied. The 
+chart below fits a separate line for each pesticide so you can see how well use 
+predicts stream levels for each one individually.
 """)
 
-        @render.plot(height=1000)
-        def pest_effects_plot():
-            colors = dict(zip(chosen(), line_colors))
-            d = pest_effects.assign(
-                category=pest_effects['pesticide'].map(pest_cat).str.capitalize())
+    ui.h3('Individual pesticides', style='margin-top: 1.5rem;')
+    ui.input_selectize(
+        'model_pests', 'Choose pesticides (8 max)',
+        choices={p: f'{p} ({pest_cat[p].capitalize()})' for p in all_pests},
+        selected=top_pests, multiple=True,
+        options={'maxItems': 8, 'plugins': ['remove_button']},
+        width='100%',
+    )
 
-            # Alphabetical by type, with Unclassified last
-            cat_order = sorted(d['category'].unique(),
-                               key=lambda c: (c == 'Unclassified', c))
+    with ui.card(full_screen=True):
+        ui.card_header('Stream concentration vs. county use, one trend line per pesticide')
 
-            # Stack groups top to bottom, leaving a row for each header and a gap between groups
-            parts, headers, y = [], [], 0
-            for cat in cat_order:
-                g = d[d['category'] == cat].sort_values('times', ascending=False)
-                headers.append((y, cat))
-                parts.append(g.assign(y=np.arange(y + 1, y + 1 + len(g))))
-                y += len(g) + 1.5
-            r = pd.concat(parts)
+        @render.plot(height=550)
+        def pest_lines():
+            chosen = list(input.model_pests())
+            fig, ax = plt.subplots(figsize=(11, 6))
 
-            fig, ax = plt.subplots(figsize=(9, 14))
-            point_colors = [colors.get(p, '#9aa5b1') for p in r['pesticide']]
+            # Background: all other pesticides
+            other = pest[~pest['Pesticide_Name'].isin(chosen)]
+            ax.scatter(other['mean_pesticide_use'], other['mean_concentration_water'],
+                       color='lightgray', s=5, alpha=0.3, label='Other pesticides')
 
-            ax.errorbar(r['times'], r['y'],
-                        xerr=[r['times'] - r['low'], r['high'] - r['times']],
-                        fmt='none', ecolor='lightgray')
-            ax.scatter(r['times'], r['y'], color=point_colors, s=30, zorder=3)
-            ax.axvline(1, color='red', linestyle='--', linewidth=1)
+            # Overall model line
+            xs_all = np.linspace(pest['log_use'].min(), pest['log_use'].max(), 50)
+            ys_all = pooled_all.params['Intercept'] + pooled_all.params['log_use'] * xs_all
+            ax.plot(10**xs_all, 10**ys_all, color='black', linestyle='--', linewidth=1.5,
+                    label='All pesticides')
+            ax.text(10**xs_all[-1] * 1.2, 10**ys_all[-1],
+                    f'R² = {pooled_all.rsquared:.2f}',
+                    fontsize=9, fontweight='bold', va='center')
 
-            # Group headers and divider lines
-            for hy, cat in headers:
-                ax.text(0.01, hy, cat, transform=ax.get_yaxis_transform(),
-                        fontweight='bold', fontsize=11, va='center')
-                if hy > 0:
-                    ax.axhline(hy - 0.75, color='#dddddd', linewidth=0.8)
+            # One fitted line per selected pesticide, R² at the end of each line
+            for name, color in zip(chosen, line_colors):
+                d = pest[pest['Pesticide_Name'] == name]
+                ax.scatter(d['mean_pesticide_use'], d['mean_concentration_water'],
+                           color=color, s=8, alpha=0.4)
 
-            ax.set_yticks(r['y'])
-            ax.set_yticklabels(r['pesticide'])
-            ax.set_ylim(y - 1, -1)   # first group at the top
-            ax.set(xscale='log', xlabel='Times higher or lower than the average pesticide')
-            ax.tick_params(axis='y', labelsize=8)
+                if len(d) < 3 or d['log_use'].nunique() < 2:
+                    continue
+                fit = stats.linregress(d['log_use'], d['log_conc'])
+                xs = np.linspace(d['log_use'].min(), d['log_use'].max(), 50)
+                ys = fit.intercept + fit.slope * xs
+                ax.plot(10**xs, 10**ys, color=color, linewidth=2.5,
+                        label=f'{name} ({pest_cat[name].capitalize()})')
+                ax.text(10**xs[-1] * 1.2, 10**ys[-1], f'R² = {fit.rvalue**2:.2f}',
+                        color=color, fontsize=9, fontweight='bold', va='center')
 
-            for label in ax.get_yticklabels():
-                if label.get_text() in colors:
-                    label.set_fontweight('bold')
-                    label.set_color(colors[label.get_text()])
-
+            ax.set(xscale='log', yscale='log',
+                   xlabel='County Pesticide Use, High Estimate (kg)',
+                   ylabel='Water Concentration (µg/L)')
+            ax.set_xlim(right=pest['mean_pesticide_use'].max() * 30)  # room for R² labels
+            ax.legend(frameon=False, fontsize=9, loc='upper left',
+                      bbox_to_anchor=(1.01, 1))
             fig.tight_layout()
             return fig
 
-    with ui.accordion(open=False):
-        with ui.accordion_panel('Model details (all pesticides)'):
-            ui.markdown("""
-**Model:** log10(concentration) ~ log10(county use) + pesticide, ordinary least squares.
-Both variables were log10-transformed because they were strongly right-skewed and spanned
-several orders of magnitude. Rows with zero county use were dropped. Each row is one
-site, pesticide, and year, so sites appear more than once; p-values do not adjust for this
-and should be read as somewhat optimistic.
-""")
-            ui.HTML(full_all.summary().tables[0].as_html())
-            ui.HTML(full_all.summary().tables[1].as_html())
+        ui.markdown("""
+Each colored line is a separate regression fit only to that pesticide's data. 
+The **R²** at the end of each line shows how much of that pesticide's variation 
+in stream levels is explained by county use. Values near 0 mean use tells you 
+little about stream levels for that pesticide; higher values mean a closer link.
+""", )
