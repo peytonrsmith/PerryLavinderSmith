@@ -143,9 +143,15 @@ pesticide off fields before it can break down or bind to soil.
 - Hover over a county or site for a quick summary, or click for full details.
 - Use the layer control in the top right to turn counties or sites on and off.
 """)
-        ui.img(src=f'data:image/png;base64,{img_b64}',
-               alt='Dashboard overview image',
-               style='width: 100%; max-width: 300px; border-radius: 8px; display: block; margin: auto;')
+        with ui.div():
+            ui.img(src=f'data:image/png;base64,{img_b64}',
+                   alt='Example of hovering over a monitoring site on the map',
+                   style='width: 100%; max-width: 380px; border: 1px solid #ddd; '
+                         'border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);')
+            ui.p('Example: hovering over a monitoring site shows its name, '
+                 'stream concentration, and county pesticide use.',
+                 class_='text-muted',
+                 style='font-size: 0.85rem; margin-top: 0.4rem; max-width: 380px;')
 
     with ui.card(height='650px'):
         @render.ui
