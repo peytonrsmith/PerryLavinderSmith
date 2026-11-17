@@ -34,7 +34,10 @@ Additional data can be accessed
 **Dashboard Change Log**
 - added explanatory picture of how to use the interactive map to address fact that in peer feedback felt like hard to understand how to use 
 - for the individual pesticide model grouped by pesticide type and include type in label so that can understand trends across pesticide type 
-- More detailed explanation of individual pesticide model because felt like it was hard to understand 
+- More detailed explanation of individual pesticide model because felt like it was hard to understand
+
+**Data Reproduction**
+
 
 **Dashboard Access**
 https://01a1d157-9b9f-ffc0-0baf-f22435667d08.share.connect.posit.cloud
