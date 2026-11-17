@@ -390,24 +390,52 @@ average pesticide (all pesticides in the data). Selected pesticides are highligh
 same colors as the chart above. Bars show 95% confidence intervals.
 """)
 
-        @render.plot(height=900)
+        @render.plot(height=1000)
         def pest_effects_plot():
-            fig, ax = plt.subplots(figsize=(9, 12))
-            d = pest_effects
             colors = dict(zip(chosen(), line_colors))
-            point_colors = [colors.get(p, '#9aa5b1') for p in d['pesticide']]
+            d = pest_effects.assign(
+                category=pest_effects['pesticide'].map(pest_cat).str.capitalize())
 
-            ax.errorbar(d['times'], d['pesticide'],
-                        xerr=[d['times'] - d['low'], d['high'] - d['times']],
+            # Alphabetical by type, with Unclassified last
+            cat_order = sorted(d['category'].unique(),
+                               key=lambda c: (c == 'Unclassified', c))
+
+            # Stack groups top to bottom, leaving a row for each header and a gap between groups
+            parts, headers, y = [], [], 0
+            for cat in cat_order:
+                g = d[d['category'] == cat].sort_values('times', ascending=False)
+                headers.append((y, cat))
+                parts.append(g.assign(y=np.arange(y + 1, y + 1 + len(g))))
+                y += len(g) + 1.5
+            r = pd.concat(parts)
+
+            fig, ax = plt.subplots(figsize=(9, 14))
+            point_colors = [colors.get(p, '#9aa5b1') for p in r['pesticide']]
+
+            ax.errorbar(r['times'], r['y'],
+                        xerr=[r['times'] - r['low'], r['high'] - r['times']],
                         fmt='none', ecolor='lightgray')
-            ax.scatter(d['times'], d['pesticide'], color=point_colors, s=30, zorder=3)
+            ax.scatter(r['times'], r['y'], color=point_colors, s=30, zorder=3)
             ax.axvline(1, color='red', linestyle='--', linewidth=1)
+
+            # Group headers and divider lines
+            for hy, cat in headers:
+                ax.text(0.01, hy, cat, transform=ax.get_yaxis_transform(),
+                        fontweight='bold', fontsize=11, va='center')
+                if hy > 0:
+                    ax.axhline(hy - 0.75, color='#dddddd', linewidth=0.8)
+
+            ax.set_yticks(r['y'])
+            ax.set_yticklabels(r['pesticide'])
+            ax.set_ylim(y - 1, -1)   # first group at the top
             ax.set(xscale='log', xlabel='Times higher or lower than the average pesticide')
             ax.tick_params(axis='y', labelsize=8)
+
             for label in ax.get_yticklabels():
                 if label.get_text() in colors:
                     label.set_fontweight('bold')
                     label.set_color(colors[label.get_text()])
+
             fig.tight_layout()
             return fig
 
