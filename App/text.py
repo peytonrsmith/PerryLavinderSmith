@@ -251,41 +251,49 @@ heavily skewed, with most values small and a few very large. To make the
 relationship easier to model, both were converted to a log10 scale. Rows with zero 
 use or zero concentration were removed, since the log of zero is undefined.
 
-We then fit a linear regression (ordinary least squares):
+We then fit a multiple linear regression (ordinary least squares) with two 
+predictors, county use and which pesticide it is:
 
-**log10(stream concentration) = intercept + slope × log10(county use)**
+**log10(stream concentration) = intercept + slope × log10(county use) + pesticide adjustment**
 
-The slope describes how stream levels change as county use goes up. A slope of 1 
-would mean concentration rises in direct proportion to use, and a slope of 0 would 
-mean no relationship at all.
+The **pesticide adjustment** gives each pesticide its own baseline level, since some 
+chemicals show up in water at much higher levels than others regardless of how much 
+is applied. The **slope** then describes how stream levels change with county use 
+for the same pesticide. A slope of 1 would mean concentration rises in direct 
+proportion to use, and a slope of 0 would mean no relationship.
 
-### Overall results (all pesticides together)
+### Overall results (all pesticides)
 """)
 
     with ui.layout_columns(col_widths=[4, 4, 4]):
         with ui.value_box():
             'R²'
-            f'{pooled_all.rsquared:.2f}'
-            f'County use explains {pooled_all.rsquared:.0%} of the variation in stream levels'
+            f'{full_all.rsquared:.2f}'
+            f'Use + pesticide explain {full_all.rsquared:.0%} of the variation in stream levels'
 
         with ui.value_box():
-            'p-value'
-            p_label(pooled_all.pvalues['log_use']).removeprefix('p ').strip()
-            'Chance of a slope this strong if there were no real link'
+            'p-value (county use)'
+            p_label(full_all.pvalues['log_use']).removeprefix('p ').strip()
+            'Chance of a use effect this strong if there were no real link'
 
         with ui.value_box():
             'Effect of 10× more county use'
-            f'{(10**pooled_all.params["log_use"] - 1) * 100:+.0f}%'
-            'change in stream concentration'
+            f'{(10**full_all.params["log_use"] - 1) * 100:+.0f}%'
+            'change in stream concentration, same pesticide'
 
     ui.markdown(f"""
-**What this means:** counties that use more of a pesticide do tend to have more of 
-it in their streams, and the link is very unlikely to be due to chance. But the R² 
-is low, so county use on its own leaves most of the differences between samples 
-unexplained. A big reason is that pesticides differ from each other: some show up 
-in water at much higher levels than others regardless of how much is applied. The 
-chart below fits a separate line for each pesticide so you can see how well use 
-predicts stream levels for each one individually.
+**What this means:** together, county use and pesticide identity explain 
+{full_all.rsquared:.0%} of the differences in stream concentrations. Almost all of 
+that comes from which pesticide it is: county use on its own explains only 
+{pooled_all.rsquared:.0%}. For the same pesticide, counties using 10 times more 
+have about {(10**full_all.params["log_use"] - 1) * 100:.0f}% higher stream levels. 
+That link is statistically clear but modest, so the chemical matters far more than 
+the amount applied.
+
+The chart below fits a separate line to each pesticide on its own. Those R² values 
+are much lower than {full_all.rsquared:.2f} because they only measure how well use 
+predicts stream levels *within* one pesticide, which is the part the overall model 
+shows is weak.
 """)
 
     ui.h3('Individual pesticides', style='margin-top: 1.5rem;')
