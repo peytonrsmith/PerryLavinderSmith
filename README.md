@@ -37,7 +37,21 @@ Additional data can be accessed
 - More detailed explanation of individual pesticide model because felt like it was hard to understand
 
 **Data Reproduction**
+Selecting Data
+- USGS Stream site pesticide concentrations were joined to a dataset that included the coordinates of each monitoring station, coordinates were then used to identify what county each monitoring sites was in
+- Estimated pesticide usage data was joined to USGS streams sites (+ locations) by matching compound, year, and county. Averages were calculated for each pesticide per year for each of the monitoring sites
 
+Logging Data
+- Preliminary investigation revealed that data (for both mean estimated pesticide use and water concentration) was very right-skewed. Logging the data resulted in closer-to-normal distributions.  
+
+Linear Regression of Total Pesticides
+- A linear regression between average estimated pesticide usage and average stream concentration from 2013-2017 was conducted
+
+Linear Regression of Categorized Pesticides
+- A key was created to match each pesticide to its respective category and joined to the dataset. Linear regressions were calculated for each pesticide category (avg. est. pesticide usage vs. avg. stream concentration) from 2013-2017
+
+Multiple Linear Regression
+- A multiple linear regression was conducted, normalizing by pesticide name, from 2013-2017 
 
 **Dashboard Access**
 https://01a1d157-9b9f-ffc0-0baf-f22435667d08.share.connect.posit.cloud
