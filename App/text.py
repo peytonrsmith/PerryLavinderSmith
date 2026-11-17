@@ -120,16 +120,10 @@ pesticides that are ending up in water systems. A growing share of
 U.S. rainfall now arrives in intense single-day storms. Heavy downpours wash more 
 pesticide off fields before it can break down or bind to soil.
 
-### How to Use the Map
-
-
-
-
 #### Data
 
 - **Pesticide use:** USGS county-level estimates of agricultural pesticide use, averaged
-  across 2013–2017. The map shows the *high* estimate, which fills in gaps where survey
-  data were not reported rather than treating them as zero.
+  across 2013–2017. 
 - **Stream concentrations:** Mean pesticide concentrations in water (µg/L) measured at
   USGS stream monitoring sites, averaged across sampling events at each site.
 
