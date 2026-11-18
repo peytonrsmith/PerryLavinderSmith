@@ -60,4 +60,14 @@ https://01a1d157-9b9f-ffc0-0baf-f22435667d08.share.connect.posit.cloud
 **AI Use**
 
 AI was used to help format and style the dashboard. 
+
+The prompts used: 
+1. How do I style a dashboard to have different colors and symbols for different pesticides and years?
+2. How to create popups in a map dashboard?
+3. Which package should I use to create an interactive dashboard map?
+4. How to create tabs on a dashboard?
+5. How to create a graph where can pick different pesticides and display them?
+
+How checked validity: 
+We reviewed code based on code seen online to create similar products. Additionally we asked AI to explain code and steps for the dashboard. 
   
