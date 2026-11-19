@@ -69,7 +69,7 @@ def make_map(counties, stations):
         tooltip_kwds={'aliases': ['County', 'Pesticide use (kg)']},
         popup=['NAME', 'GEOID', 'pest_kg'],
         popup_kwds={'aliases': ['County', 'FIPS', 'Pesticide use (kg)']},
-        legend_kwds={'caption': 'Mean Annual Pesticide Use, High Estimate (log10 kg: 2 = 100 kg, 4 = 10,000 kg)'},
+        legend_kwds={'caption': 'Mean Annual Pesticide Use, High Estimate (log10 kg)'},
         name='Counties',
         tiles='Esri.WorldGrayCanvas',
     )
@@ -95,7 +95,7 @@ def make_map(counties, stations):
                'mean_concentration_water', 'mean_pesticide_use'],
         popup_kwds={'aliases': ['Station', 'Site ID', 'State', 'HUC', 'Drainage area (km²)',
                                 'Concentration (µg/L)', 'Pesticide use (kg)']},
-        legend_kwds={'caption': 'Stream Concentration (log10 µg/L: -2 = 0.01, 0 = 1)'},
+        legend_kwds={'caption': 'Stream Concentration (log10 µg/L)'},
         name='Monitoring sites',
     )
 
