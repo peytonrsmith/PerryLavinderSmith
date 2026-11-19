@@ -271,7 +271,7 @@ much of an impact does use of the pesticide in ag have on streams.
             f'Ag use + pesticide explain {full_all.rsquared:.0%} of the variation in stream levels'
 
         with ui.value_box():
-            'p-value (county use)'
+            'p-value'
             p_label(full_all.pvalues['log_use']).removeprefix('p ').strip()
             'Chance of a use effect this strong if there were no real link'
 
