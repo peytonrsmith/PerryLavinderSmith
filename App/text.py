@@ -276,9 +276,10 @@ much of an impact does use of the pesticide in ag have on streams.
             'Chance of a use effect this strong if there were no real link'
 
         with ui.value_box():
-            'OLS slope (log use)'
+            'OLS slope'
             f'{full_all.params["log_use"]:.3f}'
-            'log₁₀ concentration per log₁₀ county use, same pesticide'
+            f'Holding pesticide type constant, a 1% increase in county pesticide use '
+            f'is associated with a {full_all.params["log_use"]:.3f}% increase in stream concentration.'
 
     ui.markdown(f"""
 **What this means:** together, county use and pesticide identity explain 
