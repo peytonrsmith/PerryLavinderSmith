@@ -241,26 +241,25 @@ with ui.nav_panel('Model'):
     ui.markdown(f"""
 ### Building the model
 
-Each data point is one pesticide at one USGS stream monitoring site in one year, 
+Each data point is one pesticide at one USGS stream monitoring site averaged over one year, 
 paired with the estimated agricultural use of that pesticide in the surrounding 
-county. In total the model uses **{len(pest):,} data points** covering 
+county in one year. In total the model uses **{len(pest):,} data points** covering 
 **{pest['Pesticide_Name'].nunique()} pesticides**.
 
 Both county use and stream concentration span several orders of magnitude and are 
-heavily skewed, with most values small and a few very large. To make the 
-relationship easier to model, both were converted to a log10 scale. Rows with zero 
-use or zero concentration were removed, since the log of zero is undefined.
+heavily right skewed. To make the relationship easier to model, both were converted to a 
+log10 scale. Rows with zero use or zero concentration were removed, since the log of zero is undefined.
 
 We then fit a multiple linear regression (ordinary least squares) with two 
-predictors, county use and which pesticide it is:
+predictors, county use and pesticide name:
 
 **log10(stream concentration) = intercept + slope × log10(county use) + pesticide adjustment**
 
-The **pesticide adjustment** gives each pesticide its own baseline level, since some 
-chemicals show up in water at much higher levels than others regardless of how much 
-is applied. The **slope** then describes how stream levels change with county use 
-for the same pesticide. A slope of 1 would mean concentration rises in direct 
-proportion to use, and a slope of 0 would mean no relationship.
+
+Including pesticide adjustment allows for the data to be normalized for pesticide type. Since 
+pesticides are used in different amounts it says holding which pesticide it is constant how 
+much of an impact does use of the pesticide in ag have on streams. 
+
 
 ### Overall results (all pesticides)
 """)
