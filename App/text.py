@@ -268,7 +268,7 @@ much of an impact does use of the pesticide in ag have on streams.
         with ui.value_box():
             'R²'
             f'{full_all.rsquared:.2f}'
-            f'Use + pesticide explain {full_all.rsquared:.0%} of the variation in stream levels'
+            f'Ag use + pesticide explain {full_all.rsquared:.0%} of the variation in stream levels'
 
         with ui.value_box():
             'p-value (county use)'
@@ -283,17 +283,11 @@ much of an impact does use of the pesticide in ag have on streams.
 
     ui.markdown(f"""
 **What this means:** together, county use and pesticide identity explain 
-{full_all.rsquared:.0%} of the differences in stream concentrations. Almost all of 
-that comes from which pesticide it is: county use on its own explains only 
-{pooled_all.rsquared:.0%}. For the same pesticide, counties using 10 times more 
-have about {(10**full_all.params["log_use"] - 1) * 100:.0f}% higher stream levels. 
-That link is statistically clear but modest, so the chemical matters far more than 
-the amount applied.
+{full_all.rsquared:.0%} of the differences in stream concentrations. 
 
 The chart below fits a separate line to each pesticide on its own. Those R² values 
 are much lower than {full_all.rsquared:.2f} because they only measure how well use 
-predicts stream levels *within* one pesticide, which is the part the overall model 
-shows is weak.
+predicts stream levels *within* one pesticide.
 """)
 
     ui.h3('Individual pesticides', style='margin-top: 1.5rem;')
