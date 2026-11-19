@@ -38,9 +38,19 @@ Additional data can be accessed
 
 **Data Reproduction**
 
+Data Sources
+- Pesticide Data: https://water.usgs.gov/nawqa/pnsp/usage/maps/county-level/ Dataset of estimated pesticide use by county in agriculture from 2013-2017. It is a USGS dataset and was loaded directly into the dashboard from the website. 
+- Water Data: https://www.sciencebase.gov/catalog/item/6712dadfd34eb6a152fc9907 Dataset of pesticides concentrations in USGS stream water samples. We used data only from 2013-2017 even though dataset goes from 2013-2022. The data for water samples was downloaded directly from the website. The data is in the box folder. 
+- Site Data: Taken from the same water data website. This allowed us to get which counties each water sample came from and thus match with the pesticide data.
+- Pesticide Category Data: Dataset of which pesticide type it was was created by Googling each pesticide type and manually creating a dataset. The data is in the box folder. 
+  
 Selecting Data
 - USGS Stream site pesticide concentrations were joined to a dataset that included the coordinates of each monitoring station, coordinates were then used to identify what county each monitoring sites was in
 - Estimated pesticide usage data was joined to USGS streams sites (+ locations) by matching compound, year, and county. Averages were calculated for each pesticide per year for each of the monitoring sites
+
+Data Cleaning 
+-Map: For the map the average pesticide use is shown. This is the average across all pesticides and years in the county. The water samples were averaged in the same way
+-Analysis: In stations with multiple water samples of the same pesticide in the same year the value was averaged
 
 Logging Data
 - Preliminary investigation revealed that data (for both mean estimated pesticide use and water concentration) was very right-skewed. Logging the data resulted in closer-to-normal distributions.  
